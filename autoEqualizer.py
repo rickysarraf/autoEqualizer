@@ -35,13 +35,13 @@ except ImportError:
     raise
 
 if DEBUG:
-    if os.path.isfile("/tmp/amarok.foo") is True:
+    if os.path.isfile(__file__+".log") is True:
 	try:
-	    os.remove("/tmp/amarok.foo")
+	    os.remove(__file__+".log")
 	except IOError:
 	    sys.stderr.write("Couldn't remove the file. Do you have ownership.\n")
 	
-    f = open("/tmp/amarok.foo", 'a')
+    f = open(__file__+".log", 'a')
 
 #class Notification( QCustomEvent ):
 class Notification( QCustomEvent ):

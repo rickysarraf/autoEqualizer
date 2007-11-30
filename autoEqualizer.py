@@ -67,7 +67,7 @@ class autoEqualizer( QApplication):
 	# create a DCOP-Application-Object to talk to Amarok
 	self.amarok = DCOPApp('amarok', self.client)
 
-        debug( "Started." )
+        debug( "Started.\n" )
 
         # Start separate thread for reading data from stdin
         self.stdinReader = threading.Thread( target = self.readStdin )
@@ -87,7 +87,7 @@ class autoEqualizer( QApplication):
             foovar = config.get( "General", "foo" )
 
         except:
-            debug( "No config file found, using defaults." )
+            debug( "No config file found, using defaults.\n" )
 
 
 ############################################################################
@@ -116,13 +116,13 @@ class autoEqualizer( QApplication):
         """ Handles notifications """
 
         string = QString(notification.string)
-        debug( "Received notification: " + str( string ) )
+        debug( "Received notification: " + str( string ) + "\n" )
 
         if string.contains( "configure" ):
             self.configure()
 
         if string.contains( "engineStateChange: play" ):
-	    debug("Play even triggered.")
+	    debug("Play event triggered.\n")
             self.engineStatePlay()
 
         if string.contains( "engineStateChange: idle" ):
@@ -135,7 +135,7 @@ class autoEqualizer( QApplication):
             self.engineStatePause()
 
         if string.contains( "trackChange" ):
-	    debug("Track change event occured")
+	    debug("Track change event occured.\n")
             self.trackChange()
 
 # Notification callbacks. Implement these functions to react to specific notification
@@ -190,7 +190,7 @@ class autoEqualizer( QApplication):
 	    err()
 	else:
 	    self.amarok.playlist.popupMessage("Activated equalizer preset -> %s" % (self.genre) )
-	    debug ("Activated equalizer preset -> %s" % (self.genre) )
+	    debug ("Activated equalizer preset -> %s\n" % (self.genre) )
 
     def equalizerState(self):
 	# check if the equalizer is on or not

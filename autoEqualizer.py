@@ -175,7 +175,7 @@ class autoEqualizer( QApplication):
 	# get the Genre from the current song.
 	retval, genre = self.amarok.player.genre()
 	if retval is not True:
-	    err()
+	    debug("I couldn't get the genre. Is Amarok running?")
 	else:
 	    return genre
 
@@ -187,7 +187,7 @@ class autoEqualizer( QApplication):
 	self.genre = self.getGenre()
 	retval, success = self.amarok.player.setEqualizerPreset(self.genre)
 	if retval is not True:
-	    err()
+	    debug("I couldn't get the equalizer preset. Is Amarok running?")
 	else:
 	    self.amarok.playlist.popupMessage("Activated equalizer preset -> %s" % (self.genre) )
 	    debug ("Activated equalizer preset -> %s\n" % (self.genre) )

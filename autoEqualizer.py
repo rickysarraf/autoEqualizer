@@ -1,4 +1,20 @@
-#!/usr/bin/env python
+#!/usr/bin/python
+
+# autoEqualizer - Script to load equalizer presets ondemand based on what genre of track is playing
+# Copyright (C) 2007 Ritesh Raj Sarraf <rrs@researchut.com>
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
 import sys
@@ -9,12 +25,23 @@ from time import sleep
 
 from qt import *
 
+DEBUG=1
+
 try:
     from dcopext import DCOPClient, DCOPApp
 except ImportError:
     sys.stderr.write("Err!!! I can't find the dcopext module.\n")
     os.popen( "kdialog --sorry 'PyKDE3 (KDE3 bindings for Python) is required for this script.'" )
     raise
+
+if DEBUG:
+    if os.path.isfile("/tmp/amarok.foo") is True:
+	try:
+	    os.remove("/tmp/amarok.foo")
+	except IOError:
+	    sys.stderr.write("Couldn't remove the file. Do you have ownership.\n")
+	
+    f = open("/tmp/amarok.foo", 'a')
 
 #class Notification( QCustomEvent ):
 class Notification( QCustomEvent ):
@@ -47,6 +74,11 @@ class autoEqualizer( QApplication):
         self.stdinReader.start()
 
         self.readSettings()
+
+    #def saveState(self):
+	# script is started by amarok, not by KDE's session manager
+	#debug("We're in saveState. We should be avoiding session starts with this in place.\n")
+	#sessionmanager.setRestartHint(QSessionManager.RestartNever)
 
     def readSettings( self ):
         """ Reads settings from configuration file """
@@ -158,6 +190,7 @@ class autoEqualizer( QApplication):
 	    err()
 	else:
 	    self.amarok.playlist.popupMessage("Activated equalizer preset -> %s" % (self.genre) )
+	    debug ("Activated equalizer preset -> %s" % (self.genre) )
 
     def equalizerState(self):
 	# check if the equalizer is on or not
@@ -175,25 +208,25 @@ class autoEqualizer( QApplication):
 
 def debug( message ):
     """ Prints debug message to stdout """
-    f = open("/tmp/amarok.foo", 'w')
     f.writelines(message)
     f.flush()
-    f.close()
 
     #print debug_prefix + " " + message
+
+def onStop(signum, stackframe):
+    """ Called when script is stopped by user """
+    debug("I'm in onStop.\n")
+    debug("We need to kill the process, otherwise it strays around even if amarok exits.\n")
+    os.kill(os.getpid(), 9)
 
 def main( ):
     app = autoEqualizer ( sys.argv )
 
     app.exec_loop()
 
-def onStop(signum, stackframe):
-    """ Called when script is stopped by user """
-    pass
-
 if __name__ == "__main__":
     mainapp = threading.Thread(target=main)
     mainapp.start()
-    signal.signal(15, onStop)
+    signal.signal(signal.SIGTERM, onStop)
     # necessary for signal catching
     while 1: sleep(120)

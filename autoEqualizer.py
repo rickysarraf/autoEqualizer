@@ -168,7 +168,6 @@ class autoEqualizer( QApplication):
     def trackChange( self ):
         """ Called when a new track starts """
 	debug ("Track Change event called.\n")
-	self.setEqualizer()
 
 
     def getGenre(self):

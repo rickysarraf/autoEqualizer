@@ -74,7 +74,7 @@ class autoEqualizer( QApplication):
         
         self.readSettings()
 
-    def saveState(self):
+    def saveState(self, sessionmanager):
         # script is started by amarok, not by KDE's session manager
         debug("We're in saveState. We should be avoiding session starts with this in place.\n")
         sessionmanager.setRestartHint(QSessionManager.RestartNever)

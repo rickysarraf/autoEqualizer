@@ -55,30 +55,29 @@ class autoEqualizer( QApplication):
 
     def __init__( self, args ):
         QApplication.__init__( self, args )
-
-	# create a new DCOP-Client
-	self.client = DCOPClient()
-	
-	# connect the client to the local DCOP-Server
-	if self.client.attach() is not True:
-	    os.popen( "kdialog --sorry 'Could not connect to local DCOP server. Something weird happened.'" )
-	    sys.exit(1)
-	    
-	# create a DCOP-Application-Object to talk to Amarok
-	self.amarok = DCOPApp('amarok', self.client)
-
+        
+        # create a new DCOP-Client
+        self.client = DCOPClient()
+        
+        # connect the client to the local DCOP-Server
+        if self.client.attach() is not True:
+            os.popen( "kdialog --sorry 'Could not connect to local DCOP server. Something weird happened.'" )
+            sys.exit(1)
+            
+        # create a DCOP-Application-Object to talk to Amarok
+        self.amarok = DCOPApp('amarok', self.client)
         debug( "Started.\n" )
-
+        
         # Start separate thread for reading data from stdin
         self.stdinReader = threading.Thread( target = self.readStdin )
         self.stdinReader.start()
-
+        
         self.readSettings()
 
     def saveState(self):
-	# script is started by amarok, not by KDE's session manager
-	debug("We're in saveState. We should be avoiding session starts with this in place.\n")
-	sessionmanager.setRestartHint(QSessionManager.RestartNever)
+        # script is started by amarok, not by KDE's session manager
+        debug("We're in saveState. We should be avoiding session starts with this in place.\n")
+        sessionmanager.setRestartHint(QSessionManager.RestartNever)
 
     def readSettings( self ):
         """ Reads settings from configuration file """
@@ -100,7 +99,7 @@ class autoEqualizer( QApplication):
         while True:
             # Read data from stdin. Will block until data arrives.
             line = sys.stdin.readline()
-	    debug ("Line is %s.\n" % (line) )
+            debug ("Line is %s.\n" % (line) )
 
             if line:
                 qApp.postEvent( self, Notification(line) )
@@ -122,7 +121,7 @@ class autoEqualizer( QApplication):
             self.configure()
 
         if string.contains( "engineStateChange: play" ):
-	    debug("Play event triggered.\n")
+            debug("Play event triggered.\n")
             self.engineStatePlay()
 
         if string.contains( "engineStateChange: idle" ):
@@ -135,7 +134,7 @@ class autoEqualizer( QApplication):
             self.engineStatePause()
 
         if string.contains( "trackChange" ):
-	    debug("Track change event occured.\n")
+            debug("Track change event occured.\n")
             self.trackChange()
 
 # Notification callbacks. Implement these functions to react to specific notification
@@ -150,8 +149,8 @@ class autoEqualizer( QApplication):
 
     def engineStatePlay( self ):
         """ Called when Engine state changes to Play """
-	debug("Calling equalizer.\n")
-	self.setEqualizer()
+        debug("Calling equalizer.\n")
+        self.setEqualizer()
 
     def engineStateIdle( self ):
         """ Called when Engine state changes to Idle """
@@ -167,39 +166,38 @@ class autoEqualizer( QApplication):
 
     def trackChange( self ):
         """ Called when a new track starts """
-	debug ("Track Change event called.\n")
+        debug ("Track Change event called.\n")
 
 
     def getGenre(self):
-	# get the Genre from the current song.
-	retval, genre = self.amarok.player.genre()
-	if retval is not True:
-	    debug("I couldn't get the genre. Is Amarok running?")
-	else:
-	    return genre
+        # get the Genre from the current song.
+        retval, genre = self.amarok.player.genre()
+        if retval is not True:
+            debug("I couldn't get the genre. Is Amarok running?")
+        else:
+            return genre
 
     def setEqualizer(self):
-	# set the equalizer accordingly
-	# TODO: It would be good to have a list of preset equalizers
-	# and match them
-
-	self.genre = self.getGenre()
-	retval, success = self.amarok.player.setEqualizerPreset(self.genre)
-	if retval is not True:
-	    debug("I couldn't get the equalizer preset. Is Amarok running?")
-	else:
-	    self.amarok.playlist.popupMessage("Activated equalizer preset -> %s" % (self.genre) )
-	    debug ("Activated equalizer preset -> %s\n" % (self.genre) )
+        # set the equalizer accordingly
+        # TODO: It would be good to have a list of preset equalizers
+        # and match them
+        self.genre = self.getGenre()
+        retval, success = self.amarok.player.setEqualizerPreset(self.genre)
+        if retval is not True:
+            debug("I couldn't get the equalizer preset. Is Amarok running?")
+        else:
+            self.amarok.playlist.popupMessage("Activated equalizer preset -> %s" % (self.genre) )
+            debug ("Activated equalizer preset -> %s\n" % (self.genre) )
 
     def equalizerState(self):
-	# check if the equalizer is on or not
-	# FIXME: Currently, it looks like dcopext has a bug
-	# even though I try to set the equalizer to on, it doesn't
-	# so for now we will check if the equalizer is on or not and
-	# enable it using the dcop command
-	retval, equalizerState = self.amarok.player.equalizerEnabled()
-	if not equalizerState:
-	    os.system( "dcop amarok player setEqualizerEnabled True" )
+        # check if the equalizer is on or not
+        # FIXME: Currently, it looks like dcopext has a bug
+        # even though I try to set the equalizer to on, it doesn't
+        # so for now we will check if the equalizer is on or not and
+        # enable it using the dcop command
+        retval, equalizerState = self.amarok.player.equalizerEnabled()
+        if not equalizerState:
+            os.system( "dcop amarok player setEqualizerEnabled True" )
 
 
 

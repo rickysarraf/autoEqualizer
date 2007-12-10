@@ -1,2 +1,2 @@
-name = autoEqualizer
+name = autoEqualizer-devel
 type = generic

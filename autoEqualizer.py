@@ -149,8 +149,7 @@ class autoEqualizer( QApplication):
 
     def engineStatePlay( self ):
         """ Called when Engine state changes to Play """
-        debug("Calling equalizer.\n")
-        self.setEqualizer()
+        pass
 
     def engineStateIdle( self ):
         """ Called when Engine state changes to Idle """
@@ -167,6 +166,7 @@ class autoEqualizer( QApplication):
     def trackChange( self ):
         """ Called when a new track starts """
         debug ("Track Change event called.\n")
+        self.setEqualizer()
 
 
     def getGenre(self):

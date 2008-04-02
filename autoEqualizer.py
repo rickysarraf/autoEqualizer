@@ -26,6 +26,7 @@ from time import sleep
 from qt import *
 
 DEBUG=1
+MODE=1
 
 try:
     from dcopext import DCOPClient, DCOPApp
@@ -53,11 +54,16 @@ class Notification( QCustomEvent ):
 class autoEqualizer( QApplication):
     """ The main application, also sets up the Qt event loop """
 
-    def __init__( self, args ):
+    def __init__( self, args, mode ):
         QApplication.__init__( self, args )
         
         # create a new DCOP-Client
         self.client = DCOPClient()
+
+	# Select what mode we want to run in
+	# 1 => shortStatusMessage
+	# 2 => popupMessage
+	self.mode = mode
         
         # connect the client to the local DCOP-Server
         if self.client.attach() is not True:
@@ -186,8 +192,14 @@ class autoEqualizer( QApplication):
         if retval is not True:
             debug("I couldn't get the equalizer preset. Is Amarok running?")
         else:
-            self.amarok.playlist.popupMessage("Activated equalizer preset -> %s" % (self.genre) )
-            debug ("Activated equalizer preset -> %s\n" % (self.genre) )
+	    if self.mode == 1:
+		    self.amarok.playlist.shortStatusMessage("Activated equalizer preset -> %s" % (self.genre) )
+		    debug ("Activated equalizer preset -> %s\n" % (self.genre) )
+	    elif self.mode == 2:
+		    self.amarok.playlist.popupMessage("Activated equalizer preset -> %s" % (self.genre) )
+		    debug ("Activated equalizer preset -> %s\n" % (self.genre) )
+	    else:
+		    pass
 
     def equalizerState(self):
         # check if the equalizer is on or not
@@ -217,7 +229,7 @@ def onStop(signum, stackframe):
     os.kill(os.getpid(), 9)
 
 def main( ):
-    app = autoEqualizer ( sys.argv )
+    app = autoEqualizer ( sys.argv, MODE )
 
     app.exec_loop()
 

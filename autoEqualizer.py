@@ -199,7 +199,9 @@ class autoEqualizer( QApplication):
 		    self.amarok.playlist.popupMessage("Activated equalizer preset -> %s" % (self.genre) )
 		    debug ("Activated equalizer preset -> %s\n" % (self.genre) )
 	    else:
-		    pass
+		    # Default Mode
+		    self.amarok.playlist.popupMessage("Activated equalizer preset -> %s" % (self.genre) )
+		    debug ("Activated equalizer preset -> %s\n" % (self.genre) )
 
     def equalizerState(self):
         # check if the equalizer is on or not

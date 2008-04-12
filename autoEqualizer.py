@@ -212,6 +212,7 @@ class autoEqualizer( QApplication):
         retval, equalizerState = self.amarok.player.equalizerEnabled()
         if not equalizerState:
             os.system( "dcop amarok player setEqualizerEnabled True" )
+	    debug("Enable the Equalizer.")
 
 
 

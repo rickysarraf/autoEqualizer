@@ -80,6 +80,19 @@ class autoEqualizer( QApplication):
         
         self.readSettings()
 
+    def osCommands(self, command):
+	    # Execute the command and return the exit value
+	    # Once the extraction problem is root-caused, we can fix this easily.
+	    os.environ['__autoEqualizer_command'] = command
+	    try:
+		    old_environ = os.environ['LANG']
+	    except KeyError:
+		    old_environ = "C"
+		    os.environ['LANG'] = "C"
+
+		    if os.system(command '> __autoEqualizer_output 2>&1') != 0:
+			    debug("Couldn't execute the command using the dcopy command interface also.")
+
     def saveState(self, sessionmanager):
         # script is started by amarok, not by KDE's session manager
         debug("We're in saveState. We should be avoiding session starts with this in place.\n")
@@ -178,8 +191,10 @@ class autoEqualizer( QApplication):
     def getGenre(self):
         # get the Genre from the current song.
         retval, genre = self.amarok.player.genre()
+	genre = genre.__str__()
         if retval is not True:
-            debug("I couldn't get the genre. Is Amarok running?")
+            debug("I couldn't get the genre using the library. Is Amarok running?")
+	    #TODO: debug("Will try using the dcop commandline interface")
         else:
             return genre
 

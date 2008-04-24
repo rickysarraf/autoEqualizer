@@ -90,8 +90,8 @@ class autoEqualizer( QApplication):
 		    old_environ = "C"
 		    os.environ['LANG'] = "C"
 
-		    if os.system(command '> __autoEqualizer_output 2>&1') != 0:
-			    debug("Couldn't execute the command using the dcopy command interface also.")
+		    #if os.system(command '> __autoEqualizer_output 2>&1') != 0:
+		    #	    debug("Couldn't execute the command using the dcopy command interface also.")
 
     def saveState(self, sessionmanager):
         # script is started by amarok, not by KDE's session manager

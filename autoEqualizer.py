@@ -23,7 +23,10 @@ import signal
 
 from time import sleep
 
-from qt import *
+try:
+    from qt import *
+except ImportError:
+    sys.stderr.write("Err!!! I need the Python Qt modules. Please install the python-qt3 package.\n")
 
 DEBUG=1
 MODE=1
